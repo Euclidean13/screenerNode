@@ -24,6 +24,10 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
     return container.get(InvestmentAdapter).getUserCriteria(user)
   }
 
+  addUserCompany(user: string, company: Company): Promise<string> {
+    return container.get(InvestmentAdapter).addUserCompany(user, company)
+  }
+
   getAllUserCompanies(user: string): Promise<Company[]> {
     return container.get(InvestmentAdapter).getAllUserCompanies(user)
   }

@@ -20,35 +20,30 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
   ): Promise<Criteria> {
     const doc = db.collection(COLLECTION_NAME).doc(user)
     if (criteria.mustHave.length !== 0) {
-      for (const mustHave in criteria.mustHave) {
+      for (const mustHave of criteria.mustHave) {
         await doc.update({
-          criteria: {
-            mustHave: admin.firestore.FieldValue.arrayUnion(mustHave),
-          },
+          'criteria.mustHave': admin.firestore.FieldValue.arrayUnion(mustHave),
         })
       }
     }
     if (criteria.superNiceToHave.length !== 0) {
-      for (const superNiceToHave in criteria.superNiceToHave) {
+      for (const superNiceToHave of criteria.superNiceToHave) {
         await doc.update({
-          criteria: {
-            superNiceToHave:
-              admin.firestore.FieldValue.arrayUnion(superNiceToHave),
-          },
+          'criteria.superNiceToHave':
+            admin.firestore.FieldValue.arrayUnion(superNiceToHave),
         })
       }
     }
     if (criteria.niceToHave.length !== 0) {
-      for (const niceToHave in criteria.niceToHave) {
+      for (const niceToHave of criteria.niceToHave) {
         await doc.update({
-          criteria: {
-            niceToHave: admin.firestore.FieldValue.arrayUnion(niceToHave),
-          },
+          'criteria.niceToHave':
+            admin.firestore.FieldValue.arrayUnion(niceToHave),
         })
       }
     }
-    const finalCriteria: User = await doc.get()
-    return finalCriteria.criteria
+    const finalCriteria = await doc.get()
+    return finalCriteria.data().criteria
   }
 
   async deleteUserCriteriaHave(
@@ -57,35 +52,30 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
   ): Promise<Criteria> {
     const doc = db.collection(COLLECTION_NAME).doc(user)
     if (criteria.mustHave.length !== 0) {
-      for (const mustHave in criteria.mustHave) {
+      for (const mustHave of criteria.mustHave) {
         await doc.update({
-          criteria: {
-            mustHave: admin.firestore.FieldValue.arrayRemove(mustHave),
-          },
+          'criteria.mustHave': admin.firestore.FieldValue.arrayRemove(mustHave),
         })
       }
     }
     if (criteria.superNiceToHave.length !== 0) {
-      for (const superNiceToHave in criteria.superNiceToHave) {
+      for (const superNiceToHave of criteria.superNiceToHave) {
         await doc.update({
-          criteria: {
-            superNiceToHave:
-              admin.firestore.FieldValue.arrayRemove(superNiceToHave),
-          },
+          'criteria.superNiceToHave':
+            admin.firestore.FieldValue.arrayRemove(superNiceToHave),
         })
       }
     }
     if (criteria.niceToHave.length !== 0) {
-      for (const niceToHave in criteria.niceToHave) {
+      for (const niceToHave of criteria.niceToHave) {
         await doc.update({
-          criteria: {
-            niceToHave: admin.firestore.FieldValue.arrayRemove(niceToHave),
-          },
+          'criteria.niceToHave':
+            admin.firestore.FieldValue.arrayRemove(niceToHave),
         })
       }
     }
-    const finalCriteria: User = await doc.get().data()
-    return finalCriteria.criteria
+    const finalCriteria = await doc.get()
+    return finalCriteria.data().criteria
   }
   async getUserCriteria(user: string): Promise<Criteria | null> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
@@ -93,11 +83,19 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     if (!doc.exists) {
       return null
     } else {
-      return doc.data
+      return doc.data()
     }
   }
 
   /** Company --------------------------------------------------------------- */
+
+  async addUserCompany(user: string, company: Company): Promise<string> {
+    const doc = db.collection(COLLECTION_NAME).doc(user)
+    const resp = await doc.update({
+      companies: admin.firestore.FieldValue.arrayUnion(company),
+    })
+    return resp
+  }
 
   async getAllUserCompanies(user: string): Promise<Company[]> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
@@ -105,7 +103,7 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     if (!doc.exists) {
       return []
     } else {
-      const user: User = doc.data
+      const user: User = doc.data()
       return user.companies
     }
   }
@@ -120,7 +118,8 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     } else {
       return ref
         .get()
-        .data.companies.filter((e: Company) => e.name === company)[0]
+        .data()
+        .companies.filter((e: Company) => e.name === company)[0]
     }
   }
   async makeADecision(
@@ -129,7 +128,7 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     decision: number
   ): Promise<string> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
-    const userSelected: User = await ref.get().data
+    const userSelected: User = await ref.get().data()
     userSelected.companies.forEach((e) => {
       if (e.name === company) {
         e.meet = decision
@@ -142,7 +141,7 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
   }
   async updateCompanyHaves(user: string, company: Company): Promise<string> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
-    const userSelected: User = await ref.get().data
+    const userSelected: User = await ref.get().data()
     userSelected.companies.forEach((e) => {
       if (e.name === company.name) {
         e.has = company.has

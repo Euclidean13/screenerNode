@@ -50,6 +50,30 @@ const getUserCompanyDetails = async (
 }
 
 // Post
+const addUserCompany = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log('hola')
+  const userName = req.query.name?.toString()
+  const company = req.body
+  let resp = undefined
+  if (userName !== undefined && company !== undefined) {
+    resp = await container
+      .get(InvestmentFacade)
+      .addUserCompany(userName, company)
+  }
+  if (resp === undefined) {
+    return res.status(500).json({
+      message: `Unable to add user company`,
+    })
+  }
+  return res.status(200).json({
+    message: resp,
+  })
+}
+
 const makeADecision = async (
   req: Request,
   res: Response,
@@ -109,6 +133,7 @@ const updateCompanyHaves = async (
 export default {
   getAllUserCompanies,
   getUserCompanyDetails,
+  addUserCompany,
   makeADecision,
   updateCompanyHaves,
 }

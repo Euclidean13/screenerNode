@@ -22,6 +22,7 @@ const getUserCriteria = async (
       message: `${userName} does not exists`,
     })
   }
+  console.log(resp)
   return res.status(200).json({
     message: resp,
   })

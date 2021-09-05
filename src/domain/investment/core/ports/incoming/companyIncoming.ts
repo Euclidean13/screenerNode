@@ -2,6 +2,7 @@ import { Company } from '../../model/company'
 import { CompanyHaves } from '../../model/companyHaves'
 
 export interface CompanyIncoming {
+  addUserCompany(user: string, company: Company): Promise<string>
   getAllUserCompanies(user: string): Promise<Company[]>
   getUserCompanyDetails(
     user: string,
