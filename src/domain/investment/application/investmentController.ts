@@ -55,7 +55,6 @@ const addUserCompany = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('hola')
   const userName = req.query.name?.toString()
   const company = req.body
   let resp = undefined
