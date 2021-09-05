@@ -54,6 +54,7 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
     company: string,
     companyHaves: CompanyHaves
   ): Promise<string> {
+    console.log('company haves', companyHaves)
     // Get user company details
     const companyDetails = await this.getUserCompanyDetails(user, company)
     let finalHaves = companyDetails !== undefined ? companyDetails.has : []
@@ -75,7 +76,7 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
       ]
       if (companyDetails.has.length !== 0) {
         finalHaves = finalHaves.filter(
-          (el) => companyHaves.missing.indexOf(el) < 0
+          (el) => companyHaves.haveNot.indexOf(el) < 0
         )
       }
     }

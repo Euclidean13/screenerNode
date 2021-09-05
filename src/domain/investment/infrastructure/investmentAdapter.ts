@@ -116,10 +116,8 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     if (!doc.exists) {
       return undefined
     } else {
-      return ref
-        .get()
-        .data()
-        .companies.filter((e: Company) => e.name === company)[0]
+      const user: User = doc.data()
+      return user.companies.filter((e: Company) => e.name === company)[0]
     }
   }
   async makeADecision(
@@ -128,29 +126,39 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
     decision: number
   ): Promise<string> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
-    const userSelected: User = await ref.get().data()
-    userSelected.companies.forEach((e) => {
-      if (e.name === company) {
-        e.meet = decision
-      }
-    })
-    return ref
-      .update(userSelected)
-      .then(() => `Decision user: ${user}, company: ${company} updated`)
-      .catch((err: any) => 'Unable to update decision')
+    const doc = await ref.get()
+    if (!doc.exists) {
+      return 'No such document!'
+    } else {
+      const user: User = doc.data()
+      user.companies.forEach((e: Company) => {
+        if (e.name === company) {
+          e.meet = decision
+        }
+      })
+      return ref
+        .update({ companies: user.companies })
+        .then(() => `Decision user: ${user}, company: ${company} updated`)
+        .catch((err: any) => 'Unable to update decision')
+    }
   }
   async updateCompanyHaves(user: string, company: Company): Promise<string> {
     const ref = db.collection(COLLECTION_NAME).doc(user)
-    const userSelected: User = await ref.get().data()
-    userSelected.companies.forEach((e) => {
-      if (e.name === company.name) {
-        e.has = company.has
-        e.hasNot = company.hasNot
-      }
-    })
-    return ref
-      .update(userSelected)
-      .then(() => `Company haves user: ${user}, company: ${company} updated`)
-      .catch((err: any) => 'Unable to update company haves')
+    const doc = await ref.get()
+    if (!doc.exists) {
+      return 'No such document!'
+    } else {
+      const userSelected: User = doc.data()
+      userSelected.companies.forEach((e) => {
+        if (e.name === company.name) {
+          e.has = company.has
+          e.hasNot = company.hasNot
+        }
+      })
+      return ref
+        .update({ companies: userSelected.companies })
+        .then(() => `Company haves user: ${user}, company: ${company} updated`)
+        .catch((err: any) => 'Unable to update company haves')
+    }
   }
 }
