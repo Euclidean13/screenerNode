@@ -1,5 +1,4 @@
 import Container, { Service } from 'typedi'
-import { isThisTypeNode } from 'typescript'
 import { InvestmentAdapter } from '../infrastructure/investmentAdapter'
 import { Company } from './model/company'
 import { CompanyHaves } from './model/companyHaves'
@@ -140,7 +139,7 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
   }
 
   calculateMatchingScore(criteria: Criteria, company: Company): number {
-    const mustHave: number = this.calculateMustHavesMatchPercentage(
+    const mustHave: number = this.findNumberOfCommonElements(
       criteria.mustHave,
       company.has
     )
@@ -149,11 +148,19 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
         criteria.superNiceToHave,
         company.has
       )
-    const niceToHave: number = this.calculateNiceToHaveMatchPercentage(
+    const niceToHave: number = this.findNumberOfCommonElements(
       criteria.niceToHave,
       company.has
     )
-    return (mustHave + superNiceToHave + niceToHave) / 3
+    const criteriaElements = [
+      ...criteria.mustHave,
+      ...criteria.superNiceToHave,
+      ...criteria.niceToHave,
+    ]
+    return (
+      ((mustHave + superNiceToHave + niceToHave) / criteriaElements.length) *
+      100
+    )
   }
 
   calculateMustHavesMatchPercentage(
