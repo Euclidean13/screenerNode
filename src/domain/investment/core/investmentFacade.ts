@@ -143,11 +143,10 @@ export class InvestmentFacade implements CriteriaIncoming, CompanyIncoming {
       criteria.mustHave,
       company.has
     )
-    const superNiceToHave: number =
-      this.calculateSuperNiceToHaveMatchPercentage(
-        criteria.superNiceToHave,
-        company.has
-      )
+    const superNiceToHave: number = this.findNumberOfCommonElements(
+      criteria.superNiceToHave,
+      company.has
+    )
     const niceToHave: number = this.findNumberOfCommonElements(
       criteria.niceToHave,
       company.has
