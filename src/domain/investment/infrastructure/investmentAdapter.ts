@@ -161,4 +161,14 @@ export class InvestmentAdapter implements CriteriaOutgoing, CompanyOutgoing {
         .catch((err: any) => 'Unable to update company haves')
     }
   }
+
+  async userDetails(user: string): Promise<User | undefined> {
+    const ref = db.collection(COLLECTION_NAME).doc(user)
+    const doc = await ref.get()
+    if (!doc.exists) {
+      return undefined
+    } else {
+      return doc.data()
+    }
+  }
 }

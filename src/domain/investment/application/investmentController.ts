@@ -49,6 +49,34 @@ const getUserCompanyDetails = async (
   })
 }
 
+const getUserCompaniesFunnel = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userName = req.query.name?.toString()
+  let resp = undefined
+
+  if (userName !== undefined) {
+    resp = await container
+      .get(InvestmentFacade)
+      .getUserCompaniesFunnel(userName)
+  }
+  if (resp === undefined) {
+    return res.status(500).json({
+      message: `Server error`,
+    })
+  }
+  if (resp === []) {
+    return res.status(204).json({
+      message: `No funnels`,
+    })
+  }
+  return res.status(200).json({
+    message: resp,
+  })
+}
+
 // Post
 const addUserCompany = async (
   req: Request,
@@ -132,6 +160,7 @@ const updateCompanyHaves = async (
 export default {
   getAllUserCompanies,
   getUserCompanyDetails,
+  getUserCompaniesFunnel,
   addUserCompany,
   makeADecision,
   updateCompanyHaves,

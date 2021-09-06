@@ -15,6 +15,10 @@ router.delete('/deleteCriteria', screeningCriteriaController.deleteUserCriteria)
 
 router.get('/userCompanies', investmentController.getAllUserCompanies)
 router.get('/userCompanyDetails', investmentController.getUserCompanyDetails)
+router.get(
+  '/getUserCompaniesFunnel',
+  investmentController.getUserCompaniesFunnel
+)
 router.post('/addUserCompany', investmentController.addUserCompany)
 router.post('/decision', investmentController.makeADecision)
 router.post('/updateCompanyHaves', investmentController.updateCompanyHaves)

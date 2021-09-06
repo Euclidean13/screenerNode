@@ -1,5 +1,6 @@
 import { Company } from '../../model/company'
 import { CompanyHaves } from '../../model/companyHaves'
+import { Funnel } from '../../model/funnel'
 
 export interface CompanyIncoming {
   addUserCompany(user: string, company: Company): Promise<string>
@@ -18,4 +19,5 @@ export interface CompanyIncoming {
     company: string,
     companyHaves: CompanyHaves
   ): Promise<string>
+  getUserCompaniesFunnel(user: string): Promise<Funnel[]>
 }

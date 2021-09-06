@@ -1,5 +1,6 @@
 import { Company } from '../../model/company'
 import { CompanyHaves } from '../../model/companyHaves'
+import { User } from '../../model/user'
 
 export interface CompanyOutgoing {
   addUserCompany(user: string, company: Company): Promise<string>
@@ -14,4 +15,5 @@ export interface CompanyOutgoing {
     decision: number
   ): Promise<string>
   updateCompanyHaves(user: string, company: Company): Promise<string>
+  userDetails(user: string): Promise<User | undefined>
 }
